@@ -17,21 +17,34 @@ const LoginForm: React.FC = () => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-
-      // Check if email is verified
+  
       if (!user.emailVerified) {
         alert('Please verify your email before logging in.');
-        await auth.signOut(); // Log out the user if email is not verified
+        await auth.signOut();
         return;
       }
-
-      router.push('/'); // Redirect to home page after login
+  
+      router.push('/profile');
     } catch (error: any) {
       console.error('Login error:', error);
-      setError(error.message || 'Login failed. Please try again.');
+      let errorMessage = 'Login failed. Please try again.';
+      switch (error.code) {
+        case 'auth/invalid-email':
+          errorMessage = 'Invalid email address.';
+          break;
+        case 'auth/wrong-password':
+          errorMessage = 'Incorrect password.';
+          break;
+        case 'auth/user-not-found':
+          errorMessage = 'User not found. Please sign up.';
+          break;
+        case 'auth/too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+      }
+      setError(errorMessage);
     }
   };
-
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);

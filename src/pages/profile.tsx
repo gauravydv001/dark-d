@@ -129,9 +129,10 @@ export default function Profile() {
   );
 }
 
-export const getServerSideProps = async (ctx: any) => {
-  const session = await getSession(ctx);
-  console.log('Server-side Session:', session); // Log session data
+
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
 
   if (!session) {
     return {
@@ -141,7 +142,8 @@ export const getServerSideProps = async (ctx: any) => {
       },
     };
   }
+
   return {
-    props: {},
+    props: { session },
   };
-};
+}
